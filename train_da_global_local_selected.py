@@ -18,6 +18,9 @@ from seqda_model import Model
 from test import validation
 from utils import AttnLabelConverter, Averager, load_char_dict
 
+import warnings
+warnings.filterwarnings("ignore")
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 

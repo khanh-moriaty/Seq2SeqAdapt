@@ -89,7 +89,7 @@ def validation(model, criterion, evaluation_loader, converter, opt):
 
         start_time = time.time()
 
-        preds, global_feature, local_feature, attention_weights, transformed_imgs, control_points = model(
+        preds, global_feature, local_feature = model(
             image, text_for_pred, is_train=False)
 
         forward_time = time.time() - start_time

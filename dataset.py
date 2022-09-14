@@ -13,6 +13,8 @@ from torch.utils.data import Dataset, ConcatDataset, Subset
 from torch._utils import _accumulate
 import torchvision.transforms as transforms
 
+DUMMY_LABEL = '[dummy_label]'
+UNLABELED_DATA = '[Unlabeled_data]'
 
 class Batch_Balanced_Dataset(object):
 
@@ -105,6 +107,7 @@ def hierarchical_dataset(root, opt, select_data='/'):
                     break
 
             if select_flag:
+                print(dirpath)
                 dataset = LmdbDataset(dirpath, opt)
                 print(
                     f'sub-directory:\t/{os.path.relpath(dirpath, root)}\t num samples: {len(dataset)}')
@@ -142,16 +145,17 @@ class LmdbDataset(Dataset):
                     label_key = 'label-%09d'.encode() % index
                     label = txn.get(label_key).decode('utf-8')
 
-                    if len(label) > self.opt.batch_max_length:
-                        # print(f'The length of the label is longer than max_length: length
-                        # {len(label)}, {label} in dataset {self.root}')
-                        continue
+                    if label != UNLABELED_DATA:
+                        if len(label) > self.opt.batch_max_length:
+                            # print(f'The length of the label is longer than max_length: length
+                            # {len(label)}, {label} in dataset {self.root}')
+                            continue
 
-                    # By default, images containing characters which are not in opt.character are filtered.
-                    # You can add [UNK] token to `opt.character` in utils.py instead of this filtering.
-                    out_of_char = f'[^{self.opt.character}]'
-                    if re.search(out_of_char, label.lower()):
-                        continue
+                        # By default, images containing characters which are not in opt.character are filtered.
+                        # You can add [UNK] token to `opt.character` in utils.py instead of this filtering.
+                        out_of_char = f'[^{self.opt.character}]'
+                        if re.search(out_of_char, label.lower()):
+                            continue
 
                     self.filtered_index_list.append(index)
 
@@ -186,7 +190,7 @@ class LmdbDataset(Dataset):
                     img = Image.new('RGB', (self.opt.imgW, self.opt.imgH))
                 else:
                     img = Image.new('L', (self.opt.imgW, self.opt.imgH))
-                label = '[dummy_label]'
+                label = DUMMY_LABEL
 
             if not self.opt.sensitive:
                 label = label.lower()
