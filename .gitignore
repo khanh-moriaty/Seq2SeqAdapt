@@ -1,5 +1,5 @@
 **/.ipynb_checkpoints/
 **/__pycache__/
-saved_models
-exp/*.log
-exp/*.csv
+saved_models/
+*.log
+*.csv

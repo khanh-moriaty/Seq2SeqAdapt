@@ -1,5 +1,6 @@
 exp_path=$(dirname $0)
 exp_name=$(basename $0 | sed -E "s,\.sh$,,")
+mkdir -p $exp_path/log
 
 CUDA_VISIBLE_DEVICES=$1 python3.6 -u $exp_path/../train_da_gradual.py \
 --Transformation TPS --FeatureExtraction ResNet --SequenceModeling BiLSTM --Prediction Attn \
@@ -9,4 +10,4 @@ CUDA_VISIBLE_DEVICES=$1 python3.6 -u $exp_path/../train_da_gradual.py \
 --valid_data /dataset/data_lmdb_release/IC15/test/ \
 --batch_size 128 --lr 1 \
 --experiment_name _$exp_name --pc 0.1 \
-2>&1 | tee $exp_path/$exp_name.log
+2>&1 | tee $exp_path/log/$exp_name.log
