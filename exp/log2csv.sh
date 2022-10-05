@@ -12,9 +12,9 @@ echo "iter,train_loss,cls_loss,sim_loss" > $output_file_train
 | sed -E "s|\[([0-9]+)/[0-9]+\] Loss: ([0-9.]+) CLS_Loss: ([0-9.]+) SIMI_Loss: ([0-9.]+) .*$|\1,\2,\3,\4|" \
 | tee -a $output_file_train
 
-echo "iter,val_loss,acc" > $output_file
+echo "iter,val_loss,accuracy,edit_distance" > $output_file
 
   cat $1 \
 | grep "valid loss" \
-| sed -E "s|\[([0-9]+)/[0-9]+\] valid loss: ([0-9.]+) accuracy: ([0-9.]+),.*$|\1,\2,\3|" \
+| sed -E "s|\[([0-9]+)/[0-9]+\] valid loss: ([0-9.]+) accuracy: ([0-9.]+), norm_ED: ([0-9.]+)$|\1,\2,\3,\4|" \
 | tee -a $output_file
