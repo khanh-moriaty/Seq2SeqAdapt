@@ -4,6 +4,7 @@ import string
 import time
 
 import numpy as np
+import pandas as pd
 import torch
 import torch.backends.cudnn as cudnn
 import torch.utils.data
@@ -20,7 +21,8 @@ def benchmark_all_eval(model, criterion, converter, opt, calculate_infer_time=Fa
     """ evaluation with 10 benchmark evaluation datasets """
     # The evaluation datasets, dataset order is same with Table 1 in our paper.
     eval_data_list = ['IIIT5k_3000', 'SVT', 'IC03_860', 'IC03_867', 'IC13_857',
-                      'IC13_1015', 'IC15_1811', 'IC15_2077', 'SVTP', 'CUTE80']
+                      'IC13_1015', 'IC15_1811', 'IC15_2077', 'SVTP', 'CUTE80',
+                      'FUNSD', 'IAM', 'WordArt']
 
     if calculate_infer_time:
         evaluation_batch_size = 1  # batch_size should be 1 to calculate the GPU inference time per image.
@@ -64,6 +66,12 @@ def benchmark_all_eval(model, criterion, converter, opt, calculate_infer_time=Fa
     print(evaluation_log)
     with open(f'./result/{opt.experiment_name}/log_all_evaluation.txt', 'a') as log:
         log.write(evaluation_log + '\n')
+    
+    df = pd.DataFrame([
+        {'dataset': x, 'accuracy': y} 
+        for x,y in zip(eval_data_list, list_accuracy)
+    ])
+    df.to_csv(f'./result/{opt.experiment_name}/log_all_evaluation.csv')
 
     return None
 
